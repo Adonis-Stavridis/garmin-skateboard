@@ -11,8 +11,11 @@ class SkateboardDelegate extends WatchUi.BehaviorDelegate {
     }
 
     function onSelect() as Boolean {
-        _app.startStopActivity();
+        _app.onStartStopSelect();
         return true;
     }
 
+    function onBack() as Boolean {
+        return _app.onLapBack();
+    }
 }

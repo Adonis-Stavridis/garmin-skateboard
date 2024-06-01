@@ -7,7 +7,7 @@ import Toybox.Timer;
 class SkateboardView extends WatchUi.View {
 
     // Refs
-    private const _stats = getStats();
+    private const _recording = getRecording();
 
     // Controllers
     private var _durationElement;
@@ -47,7 +47,7 @@ class SkateboardView extends WatchUi.View {
     }
 
     private function drawDuration() as Void {
-        var duration = _stats.getDuration();
+        var duration = _recording.getSeconds();
         var minutes = duration / 60;
         var seconds = duration % 60;
         var timeString = Lang.format(

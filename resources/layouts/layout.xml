@@ -1,7 +1,7 @@
 <layout id="MainLayout">
     <bitmap
         id="Icon"
-        filename="../drawables/skateboard.png"
+        filename="../images/skateboard.png"
         x="center"
         y="12%"
     />

@@ -10,13 +10,10 @@ class SkateboardApp extends Application.AppBase {
 
     // Refs
     private var _view;
-    private var _stats;
+    private var _recording;
 
     // Controllers
     private const _scheduler = new Timer.Timer();
-
-    // State
-    private var _isStarted = false;
 
     function initialize() {
         AppBase.initialize();
@@ -26,9 +23,8 @@ class SkateboardApp extends Application.AppBase {
     function onStart(state as Dictionary?) as Void {
         System.println("> Started application");
         
-        _stats = new SkateboardStats();
-        
-        resetSchedule();
+        _recording = new SkateboardRecording();
+        _scheduler.start(method(:updateSchedule), UPDATE_TIME, true);
     }
 
     // onStop() is called when your application is exiting
@@ -45,31 +41,34 @@ class SkateboardApp extends Application.AppBase {
     function getView() as SkateboardView {
         return _view;
     }
-
-    function resetSchedule() as Void {
-        _scheduler.stop();
-        _scheduler.start(method(:updateSchedule), UPDATE_TIME, true);
+    
+    function getRecording() as SkateboardRecording {
+        return _recording;
     }
 
     function updateSchedule() as Void {
-        if (_isStarted) {
-            _stats.incrementDuration();
-        }
+        _recording.update();
         WatchUi.requestUpdate();
     }
 
-    function getStats() as SkateboardStats {
-        return _stats;
+    function onStartStopSelect() as Void {
+        // handle select if in other view
+        _recording.startStopRecording();
+        WatchUi.requestUpdate();
     }
 
-    function startStopActivity() as Void {
-        if (!_isStarted) {
-            System.println("> Started activity");
-        } else {
-            System.println("> Stopped activity");
+    function onLapBack() as Boolean {
+        if (_recording.isRecording()) {
+            _recording.addLap();
+            WatchUi.requestUpdate();
+            return true;
         }
-        _isStarted = !_isStarted;
-        resetSchedule();
+        if (_recording.hasPendingRecording()) {
+            // handle unsaved recording
+            System.println("> Has unsaved recording");
+            return false;
+        }
+        return false;
     }
 
 }
@@ -82,6 +81,6 @@ function getView() as SkateboardView {
     return Application.getApp().getView() as SkateboardView;
 }
 
-function getStats() as SkateboardStats {
-    return Application.getApp().getStats() as SkateboardStats;
+function getRecording() as SkateboardRecording {
+    return Application.getApp().getRecording() as SkateboardRecording;
 }
