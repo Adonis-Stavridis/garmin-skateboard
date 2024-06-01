@@ -1,8 +1,18 @@
 import Toybox.Graphics;
 import Toybox.WatchUi;
+import Toybox.System;
+import Toybox.Lang;
+import Toybox.Timer;
 
-class skateboardView extends WatchUi.View {
+class SkateboardView extends WatchUi.View {
 
+    // Refs
+    private const _stats = getStats();
+
+    // Controllers
+    private var _durationElement;
+    private var _clockElement;
+    
     function initialize() {
         View.initialize();
     }
@@ -10,6 +20,9 @@ class skateboardView extends WatchUi.View {
     // Load your resources here
     function onLayout(dc as Dc) as Void {
         setLayout(Rez.Layouts.MainLayout(dc));
+
+        _durationElement = View.findDrawableById("Duration");
+        _clockElement = View.findDrawableById("Clock");
     }
 
     // Called when this View is brought to the foreground. Restore
@@ -20,6 +33,9 @@ class skateboardView extends WatchUi.View {
 
     // Update the view
     function onUpdate(dc as Dc) as Void {
+        drawDuration();
+        drawClock();
+
         // Call the parent onUpdate function to redraw the layout
         View.onUpdate(dc);
     }
@@ -28,6 +44,26 @@ class skateboardView extends WatchUi.View {
     // state of this View here. This includes freeing resources from
     // memory.
     function onHide() as Void {
+    }
+
+    private function drawDuration() as Void {
+        var duration = _stats.getDuration();
+        var minutes = duration / 60;
+        var seconds = duration % 60;
+        var timeString = Lang.format(
+            "$1$:$2$",
+            [minutes, seconds.format("%02d")]
+        );
+        _durationElement.setText(timeString);
+    }
+
+    private function drawClock() as Void {
+        var clockTime = System.getClockTime();
+        var timeString = Lang.format(
+            "$1$:$2$",
+            [clockTime.hour, clockTime.min.format("%02d")]
+        );
+        _clockElement.setText(timeString);
     }
 
 }

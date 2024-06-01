@@ -1,14 +1,17 @@
 import Toybox.Lang;
 import Toybox.WatchUi;
 
-class skateboardDelegate extends WatchUi.BehaviorDelegate {
+class SkateboardDelegate extends WatchUi.BehaviorDelegate {
+
+    // Refs
+    private const _app = getApp();
 
     function initialize() {
         BehaviorDelegate.initialize();
     }
 
-    function onMenu() as Boolean {
-        WatchUi.pushView(new Rez.Menus.MainMenu(), new skateboardMenuDelegate(), WatchUi.SLIDE_UP);
+    function onSelect() as Boolean {
+        _app.startStopActivity();
         return true;
     }
 
